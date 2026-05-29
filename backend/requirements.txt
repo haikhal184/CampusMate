@@ -1,0 +1,19 @@
+# Framework Web API
+fastapi
+uvicorn
+
+# Validasi Data
+pydantic
+
+# Ekosistem AI & RAG (LangChain)
+langchain
+langchain-community
+langchain-huggingface
+langchain-text-splitters
+
+# Pemroses Dokumen PDF
+pypdf
+
+# Model Embedding & Database Vektor
+sentence-transformers
+chromadb

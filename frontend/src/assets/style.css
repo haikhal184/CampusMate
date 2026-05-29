@@ -1,0 +1,76 @@
+/* ==========================================
+   FILE: frontend/src/assets/style.css
+   ========================================== */
+
+/* 1. Mengimpor Direktif Inti Tailwind CSS */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 2. Pengaturan Dasar Global (Base Layer) */
+@layer base {
+  body {
+    /* Menggunakan warna pastel yang sangat bersih dan menenangkan */
+    background-color: #F8FAFC; 
+    /* Font rendering agar teks terlihat lebih tajam dan halus di layar */
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    /* Menerapkan font Inter sebagai default */
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #1e293b; /* Warna teks slate-800 yang lembut, tidak hitam pekat (mengurangi kontras tajam) */
+  }
+}
+
+/* 3. Komponen Kustom Ul/UX */
+@layer components {
+  /* Class kustom untuk efek Glassmorphism.
+    Bisa kamu panggil dengan class="glass-panel" di elemen div manapun.
+  */
+  .glass-panel {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8px 32px 0 rgba(148, 163, 184, 0.15); /* Bayangan lembut khas desain modern */
+  }
+
+  /* Efek melayang halus untuk interaksi tombol */
+  .btn-hover-effect {
+    @apply transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg active:translate-y-0 active:shadow-md;
+  }
+}
+
+/* 4. Kustomisasi Scrollbar (Minimalis & Clean) */
+/* Scrollbar default browser biasanya tebal dan jelek, kita ubah agar menyatu dengan desain */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent; /* Background transparan agar tidak mengganggu layout */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1; /* Warna abu-abu lembut (slate-300) */
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8; /* Sedikit lebih gelap saat di-hover (slate-400) */
+}
+
+/* Mengatasi outline fokus bawaan browser yang merusak estetika */
+*:focus {
+  outline: none;
+}
+
+/* 5. Animasi Kustom Tambahan */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.4s ease-out forwards;
+}
