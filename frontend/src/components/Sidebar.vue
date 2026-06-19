@@ -17,15 +17,25 @@
       <h3 class="text-xs font-bold text-slate-500 uppercase tracking-widest mb-4 px-3">Riwayat Terbaru</h3>
       
       <ul class="space-y-1.5">
-        <li v-for="history in chatHistories" :key="history.id">
+        <li v-for="history in chatHistories" :key="history.id" class="group relative">
           <button 
             @click="loadChat(history.id)"
-            class="w-full flex items-center gap-3 text-left px-4 py-3.5 rounded-xl text-base text-slate-700 hover:bg-white hover:text-indigo-700 transition-all border border-transparent hover:border-slate-100 group"
+            class="w-full flex items-center gap-3 text-left px-4 py-3.5 rounded-xl text-base text-slate-700 hover:bg-white hover:text-indigo-700 transition-all border border-transparent hover:border-slate-100 pr-12"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-indigo-500 transition-colors" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-slate-400 group-hover:text-indigo-500 transition-colors flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
             </svg>
             <span class="truncate block w-full font-medium">{{ history.title }}</span>
+          </button>
+
+          <button
+            @click.stop="handleDelete(history.id)"
+            class="absolute right-2 top-1/2 -translate-y-1/2 p-2 text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all duration-200 rounded-lg hover:bg-red-50/80"
+            title="Hapus riwayat"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+            </svg>
           </button>
         </li>
       </ul>
@@ -63,5 +73,12 @@ const startNewChat = () => {
 
 const loadChat = (id) => {
   chatStore.loadChat(id);
+};
+
+// Fungsi baru untuk menangani penghapusan
+const handleDelete = (id) => {
+  if (confirm('Hapus riwayat obrolan ini?')) {
+    chatStore.deleteChat(id);
+  }
 };
 </script>

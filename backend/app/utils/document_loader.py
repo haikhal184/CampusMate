@@ -32,40 +32,48 @@ def main():
     print(f"📄 Berhasil mengekstraksi total: {len(documents)} halaman dokumen mentah.")
 
     # 3. Proses Chunking / Pemotongan Teks (RAG-Optimized)
-    # Ditargetkan khusus untuk menjaga keutuhan format regulasi (Bab, Pasal, dan Poin Berangka)
     print("✂️  Melakukan pemotongan teks secara modular (Text Splitting)...")
     text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1200,      # Diperbesar agar batas SKS, IPK, dan pasal hukum masuk utuh dalam 1 fragmen
-        chunk_overlap=250,    # Overlap yang cukup menjamin keterkaitan konteks antar potongan teks
+        chunk_size=1200,      
+        chunk_overlap=250,    
         separators=[
-            "\n\n",           # Prioritas 1: Pisahkan per paragraf utuh
-            "\n",             # Prioritas 2: Pisahkan per baris baru
-            "1.", "2.", "3.", # Prioritas 3: Deteksi urutan poin regulasi agar tidak terbelah tengah jalan
-            " ",              # Prioritas 4: Pisahkan per kata
-            ""                # Jalur darurat: Karakter tunggal
+            "\n\n",           
+            "\n",             
+            "1.", "2.", "3.", 
+            " ",              
+            ""                
         ]
     )
     
     chunks = text_splitter.split_documents(documents)
     print(f"🧩 Dokumen sukses dipecah menjadi {len(chunks)} potongan teks (chunks) siap indeks.")
 
+    # [TAMBAHAN BARU]: Modifikasi Metadata untuk Frontend Vue.js
+    print("🏷️  Menyuntikkan metadata 'source_type' pada setiap potongan teks...")
+    for chunk in chunks:
+        # PyPDFDirectoryLoader otomatis menyertakan metadata 'source' (contoh: data/raw/Pedoman.pdf).
+        # Kita potong path-nya agar tersisa nama filenya saja (Pedoman.pdf) untuk keperluan URL di Frontend.
+        if "source" in chunk.metadata:
+            original_path = chunk.metadata["source"]
+            file_name = os.path.basename(original_path)
+            chunk.metadata["source"] = file_name
+        
+        # Tambahkan label tipe dokumen agar dikenali oleh tombol hijau di Vue.js
+        chunk.metadata["source_type"] = "file"
+
     # 4. Inisialisasi Model Embedding Multilingual
-    # Menggunakan model sentence-transformers dari HuggingFace yang optimal untuk Bahasa Indonesia
     print("🧠 Memuat Model Embedding (sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2)...")
     embeddings = HuggingFaceEmbeddings(
         model_name="sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
-        model_kwargs={'device': 'cpu'} # Setel ke 'cuda' jika komputer server memiliki GPU Nvidia aktif
+        model_kwargs={'device': 'cpu'} 
     )
 
     # 5. Pembersihan dan Penyegaran Vector Database ChromaDB
     print("💾 Memperbarui Pangkalan Data Vektor (ChromaDB Vector Store)...")
-    
-    # Jika folder chroma_db lama sudah ada, kita hapus fisiknya agar koordinat vektor tidak tumpang tindih (corrupted)
     if os.path.exists(CHROMA_PATH):
         print("🧹 Menghapus index database vektor lama untuk mencegah duplikasi data...")
         try:
             shutil.rmtree(CHROMA_PATH)
-            # Berikan jeda waktu sejenak agar OS menyelesaikan proses penghapusan file
             import time
             time.sleep(1)
         except Exception as e:
